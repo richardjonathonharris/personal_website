@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block body %}
+Hello!
+<p>
+{% for entry in paragraph %}
+    {{ entry }}
+{% endfor %}
+</p>
+{% endblock %}
