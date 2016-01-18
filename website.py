@@ -5,7 +5,7 @@ from flask import render_template, url_for, request, session, g, \
 from contextlib import closing
 from helpers.helpers import render_about_page, render_post_page
 
-DATABASE = '/tmp/flaskr.db'
+DATABASE = 'posts.db'
 DEBUG = True
 SECRET_KEY = 'dev key'
 USERNAME = 'admin'

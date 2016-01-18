@@ -6,47 +6,50 @@
 <script type="text/javascript">
 var w = 500;
 var h = 500;
-var barPadding = 1;
-var dataset = {{ d3 }};
+var padding = 40;
+var dataset = {{ d3|tojson }};
+var xScale = d3.scale.linear()
+                    .domain([0, d3.max(dataset, function(d) { return d.X; })])
+                    .range([padding, w - padding * 2]);
+var yScale = d3.scale.linear()
+                    .domain([0, d3.max(dataset, function(d) { return d.Y; })])
+                    .range([h - padding, padding]);
+var rScale = d3.scale.linear()
+                    .domain([0, d3.max(dataset, function(d) { return d.Y; })])
+                    .range([2,5]);
 var svg = d3.select("body")
     .append("svg")
     .attr("width", w)
     .attr("height", h);
-svg.selectAll("rect")
+svg.selectAll("circle")
     .data(dataset)
     .enter()
-    .append("rect")
-    .attr("x", function(d, i) {
-         return i * (w / dataset.length);
-         })
-    .attr("y", function(d) {
-            return h - (d * 4);
+    .append("circle")
+    .attr("cx", function(d) {
+            return xScale(d.X);
             })
-    .attr("width", w / dataset.length - barPadding)
-    .attr("height", function(d) {
-         return d * 4;
-         })
-    .attr("fill", function(d) {
-            return "rgb(0,0," + (Math.abs(d) * 10) + ")";
+    .attr("cy", function(d) {
+            return yScale(d.Y);
+            })
+    .attr("r", function(d) {
+            return rScale(d.Y);
             });
 svg.selectAll("text")
     .data(dataset)
     .enter()
     .append("text")
     .text(function(d) {
-            return d;
+            return d.name;
             })
-    .attr("x", function(d, i) {
-            return i * (w / dataset.length) + (w / dataset.length - barPadding) / 2;
+    .attr("x", function(d) {
+            return xScale(d.X);
             })
     .attr("y", function(d) {
-            return h - (d * 4) + 14;
+            return yScale(d.Y);
             })
     .attr("font-family", "sans-serif")
     .attr("font-size", "11px")
-    .attr("fill", "white")
-    .attr("text-anchor", "middle")
-;
+    .attr("fill", "red")
 </script>
 
 

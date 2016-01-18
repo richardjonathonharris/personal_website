@@ -27,8 +27,9 @@ class D3Render(object):
     def get_post_json(self):
         json_file = open(self.file_dir + self.post_id + '.json')
         dictionary = json.load(json_file)
-        return_list = [x['X'] for x in dictionary]
-        return return_list
+        return dictionary
+        # return_list = [[x['X'], x['Y'], str(x['name'])] for x in dictionary]
+        # return return_list
 
     def render_d3(self):
         return self.get_post_json()
