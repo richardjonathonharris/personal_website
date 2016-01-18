@@ -3,6 +3,7 @@ from flask import Flask
 from flask import render_template, url_for, request, session, g, \
     redirect, abort, flash
 from contextlib import closing
+from helpers.helpers import render_about_page, render_post_page
 
 DATABASE = '/tmp/flaskr.db'
 DEBUG = True
@@ -45,21 +46,21 @@ def render_index_page():
 
 @app.route('/about/')
 def render_about():
-    paragraph = ['This is the about me page']
-    return render_template('text.html', paragraph=paragraph)
+    return render_about_page()
 
 
 @app.route('/posts/')
 def render_post_lists():
-    cur = g.db.execute('SELECT title, text FROM entries ORDER BY id DESC')
-    paragraph = [dict(title=row[0], text=row[1]) for row in cur.fetchall()]
-    return render_template('text.html', paragraph=paragraph)
+    cur = g.db.execute('SELECT id, title, text FROM entries ORDER BY id DESC')
+    paragraph = [dict(id=row[0], title=row[1], text=row[2])
+                 for row in cur.fetchall()]
+    return render_template('post_list.html', paragraph=paragraph)
 
 
 @app.route('/posts/<post_id>')
 def return_post(post_id):
-        return render_template('text.html', paragraph=list(post_id))
+    return render_post_page(g.db, post_id)
+
 
 if __name__ == '__main__':
-    app.debug = True
     app.run(port=3000)

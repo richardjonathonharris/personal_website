@@ -2,7 +2,7 @@
 {% block body %}
 <p>
 {% for entry in paragraph %}
-{{ entry }}<br />
+<h3><a href="{{ url_for('return_post', post_id=entry.id) }}">{{ entry.title }}</a></h3>
 {% endfor %}
 </p>
 {% endblock %}
