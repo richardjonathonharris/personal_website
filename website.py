@@ -6,10 +6,9 @@ from contextlib import closing
 from helpers.helpers import render_about_page, render_post_page
 import os
 
-app.config ['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
-
 app = Flask(__name__)
 app.config.from_object(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 
 
 def connect_db():
