@@ -14,7 +14,7 @@ def render_about_page():
         and Earlham College (Bachelors in Japanese Studies).',
         'I spend most of my day doing data work in Python, but also do work \
         in R when it\'s called for.',
-        'In my spare time, I play a lot of geeky card and broad games, \
+        'In my spare time, I play a lot of geeky card and board games, \
         particularly one called Netrunner.',
     ]
     return render_template('text.html', paragraph=about_me)
@@ -31,7 +31,7 @@ class D3Render(object):
         else:
             json_file = open(self.file_dir + self.post_id + '.json')
             dictionary = json.load(json_file)
-            return dictionary
+            return [value for value in dictionary.values()]
 
     def render_d3(self):
         return self.get_post_json()

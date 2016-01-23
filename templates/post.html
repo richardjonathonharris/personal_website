@@ -1,10 +1,19 @@
 {% extends "layout.html" %}
 {% block body %}
+<style>
+div.tooltip {
+    background: lightsteelblue;
+    border: 10px;
+    text-align: center;
+    padding: 2px;
+}
+</style>
 <h1>{{ paragraph.title }}</h1>
 {{ paragraph.text }}
+<!--{{ d3|tojson }} -->
 <script type="text/javascript" src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script type="text/javascript">
-var w = 500;
+var w = 1000;
 var h = 500;
 var padding = 40;
 var dataset = {{ d3|tojson }};
@@ -21,6 +30,10 @@ var svg = d3.select("body")
     .append("svg")
     .attr("width", w)
     .attr("height", h);
+var tooltip = d3.select("body")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
 svg.selectAll("circle")
     .data(dataset)
     .enter()
@@ -31,25 +44,46 @@ svg.selectAll("circle")
     .attr("cy", function(d) {
             return yScale(d.Y);
             })
-    .attr("r", function(d) {
-            return rScale(d.Y);
-            });
-svg.selectAll("text")
-    .data(dataset)
-    .enter()
-    .append("text")
-    .text(function(d) {
-            return d.name;
-            })
-    .attr("x", function(d) {
-            return xScale(d.X);
-            })
-    .attr("y", function(d) {
-            return yScale(d.Y);
-            })
-    .attr("font-family", "sans-serif")
-    .attr("font-size", "11px")
-    .attr("fill", "red")
+    .attr("r", 2.5)
+    .attr("fill", function(d) {
+            if (d.grouping == 0) {
+                return "red"
+                }
+            else if (d.grouping == 1) {
+                return "orange"
+                }
+            else if (d.grouping == 2) {
+                return "yellow"
+                }
+            else if (d.grouping == 3) {
+                return "green"
+                }
+            else if (d.grouping == 4) {
+                return "blue"
+                }
+            else if (d.grouping == 5) {
+                return "purple"
+                }
+            else if (d.grouping == 6) {
+                return "gray"
+                }
+            else {
+                return "black"
+                }
+           })
+    .on("mouseover", function (d) {
+            tooltip.transition()
+                .duration(200)
+                .style("opacity", .9);
+                tooltip.html(d.name + "<br />" + d.created_at + "<br />" + d.deck_id)
+                .style("left", (d3.event.pageX + 5) + ".px")
+                .style("top", (d3.event.pageY - 28) + ".px");
+                })
+    .on("mouseout", function(d) {
+            tooltip.transition()
+                .duration(500)
+                .style("opacity", 0);
+                });
 </script>
 
 

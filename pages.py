@@ -5,7 +5,7 @@ def return_page_directory(post_id=None):
         'noise-deck-creation': {
             'title': 'Noise: Hacker Extraordinaire -- Deck Creation',
             'text': 'temporary text',
-            'json': '1',
+            'json': 'noise-deck',
             'date': datetime(2016, 1, 23, 12, 36, 0)
         },
         'personal-evolution-deck-creation': {
