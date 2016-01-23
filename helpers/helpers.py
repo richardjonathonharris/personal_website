@@ -26,11 +26,12 @@ class D3Render(object):
         self.file_dir = 'data/'
 
     def get_post_json(self):
-        json_file = open(self.file_dir + self.post_id + '.json')
-        dictionary = json.load(json_file)
-        return dictionary
-        # return_list = [[x['X'], x['Y'], str(x['name'])] for x in dictionary]
-        # return return_list
+        if self.post_id is None:
+            return None
+        else:
+            json_file = open(self.file_dir + self.post_id + '.json')
+            dictionary = json.load(json_file)
+            return dictionary
 
     def render_d3(self):
         return self.get_post_json()

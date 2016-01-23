@@ -2,6 +2,7 @@ from flask import Flask
 from flask import render_template
 from helpers.helpers import render_about_page, render_post_page
 from pages import return_page_directory
+from datetime import datetime
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -21,7 +22,9 @@ def render_about():
 @app.route('/posts/')
 def render_post_lists():
     page_list = return_page_directory()
-    paragraph = [dict(id=key, title=value['title'], date=value['date'])
+    paragraph = [dict(id=key,
+                      title=value['title'],
+                      date=value['date'].strftime('%m-%d-%Y'))
                   for key, value in page_list.items()]
     return render_template('post_list.html', paragraph=paragraph)
 
@@ -32,5 +35,5 @@ def return_post(post_id):
 
 
 if __name__ == '__main__':
-    app.debug = True
+    app.debug = False
     app.run(port=3000)
