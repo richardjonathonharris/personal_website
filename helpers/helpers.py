@@ -1,4 +1,5 @@
 from flask import render_template
+from pages import return_page_directory
 import json
 
 
@@ -35,13 +36,11 @@ class D3Render(object):
         return self.get_post_json()
 
 
-def render_post_page(database, post_id):
-    d3 = D3Render(post_id)
-    post_query = (post_id,)
-    cur = database.execute('SELECT title, text FROM entries WHERE id = ?',
-                           post_query)
-    result = cur.fetchone()
-    page_text = dict(title=result[0], text=result[1])
+def render_post_page(post_id):
+    page_data = return_page_directory(post_id)
+    d3 = D3Render(page_data['json'])
+    page_text = dict(title=page_data['title'],
+                     text=page_data['text'])
     return render_template('post.html',
                            paragraph=page_text,
                            d3=d3.render_d3())

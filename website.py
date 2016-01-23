@@ -1,37 +1,10 @@
-import sqlite3
 from flask import Flask
-from flask import render_template, url_for, request, session, g, \
-    redirect, abort, flash
-from contextlib import closing
+from flask import render_template
 from helpers.helpers import render_about_page, render_post_page
-import os
+from pages import return_page_directory
 
 app = Flask(__name__)
 app.config.from_object(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
-
-
-def connect_db():
-    return sqlite3.connect(app.config['DATABASE'])
-
-
-def init_db():
-    with closing(connect_db()) as db:
-        with app.open_resource('schema.sql', mode='r') as f:
-            db.cursor().executescript(f.read())
-        db.commit()
-
-
-@app.before_request
-def before_request():
-    g.db = connect_db()
-
-
-@app.teardown_request
-def teardown_request(exception):
-    db = getattr(g, 'db', None)
-    if db is not None:
-        db.close()
 
 
 @app.route('/')
@@ -47,16 +20,17 @@ def render_about():
 
 @app.route('/posts/')
 def render_post_lists():
-    cur = g.db.execute('SELECT id, title, text FROM entries ORDER BY id DESC')
-    paragraph = [dict(id=row[0], title=row[1], text=row[2])
-                 for row in cur.fetchall()]
+    page_list = return_page_directory()
+    paragraph = [dict(id=key, title=value['title'], date=value['date'])
+                  for key, value in page_list.items()]
     return render_template('post_list.html', paragraph=paragraph)
 
 
 @app.route('/posts/<post_id>')
 def return_post(post_id):
-    return render_post_page(g.db, post_id)
+    return render_post_page(post_id)
 
 
 if __name__ == '__main__':
+    app.debug = True
     app.run(port=3000)
