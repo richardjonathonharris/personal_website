@@ -35,5 +35,5 @@ def return_post(post_id):
 
 
 if __name__ == '__main__':
-    app.debug = True
+    app.debug = False
     app.run(port=3000)
