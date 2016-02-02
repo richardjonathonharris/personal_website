@@ -8,8 +8,12 @@ div.tooltip {
     padding: 2px;
 }
 </style>
-<h1>{{ paragraph.title }}</h1>
-{{ paragraph.text }}
+<h1 class="container">{{ paragraph.title }}</h1>
+{% for item in paragraph.text %}
+    <p class="container"> {{ item }}
+   </p>
+{% endfor %}
+<p class="container" id ="scatter">
 <!--{{ d3|tojson }} -->
 <script type="text/javascript" src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script type="text/javascript">
@@ -19,14 +23,14 @@ var padding = 40;
 var dataset = {{ d3|tojson }};
 var xScale = d3.scale.linear()
                     .domain([0, d3.max(dataset, function(d) { return d.X; })])
-                    .range([padding, w - padding * 2]);
+                    .range([padding * 2, w - padding * 12.5]);
 var yScale = d3.scale.linear()
                     .domain([0, d3.max(dataset, function(d) { return d.Y; })])
-                    .range([h - padding, padding]);
+                    .range([h - padding* 3, padding*3]);
 var rScale = d3.scale.linear()
                     .domain([0, d3.max(dataset, function(d) { return d.Y; })])
                     .range([2,5]);
-var svg = d3.select("body")
+var svg = d3.select("#scatter")
     .append("svg")
     .attr("width", w)
     .attr("height", h);
@@ -75,7 +79,7 @@ svg.selectAll("circle")
             tooltip.transition()
                 .duration(200)
                 .style("opacity", .9);
-                tooltip.html(d.name + "<br />" + d.created_at + "<br />" + d.deck_id)
+                tooltip.html(d.name + "<br />" + 'Posted: ' + d.date)
                 .style("left", (d3.event.pageX + 5) + ".px")
                 .style("top", (d3.event.pageY - 28) + ".px");
                 })
@@ -85,6 +89,5 @@ svg.selectAll("circle")
                 .style("opacity", 0);
                 });
 </script>
-
 
 {% endblock %}

@@ -3,23 +3,6 @@ from pages import return_page_directory
 import json
 
 
-def render_about_page():
-    about_me = [
-        'Richard Harris',
-        'I\'m a data scientist based in Chicago, IL. Currently working at Braintree.\
-        In past lives, I worked at the University of Chicago Crime Lab as a \
-        research specialist and at City Hall, Osaka, Japan as a \
-        Coordinator for international relations on the JET Programme.',
-        'I studied at Georgetown University (Masters in Public Policy) \
-        and Earlham College (Bachelors in Japanese Studies).',
-        'I spend most of my day doing data work in Python, but also do work \
-        in R when it\'s called for.',
-        'In my spare time, I play a lot of geeky card and board games, \
-        particularly one called Netrunner.',
-    ]
-    return render_template('text.html', paragraph=about_me)
-
-
 class D3Render(object):
     def __init__(self, post_id):
         self.post_id = post_id

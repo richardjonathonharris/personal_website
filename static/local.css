@@ -6,3 +6,12 @@ div.bar {
     margin-right: 20px;
 }
 
+body {
+    padding: 10px;
+    padding-right: 50px;
+    padding-left: 50px;
+}
+
+p {
+    padding-right: 2cm;
+}
