@@ -12,6 +12,12 @@ body {
     padding-left: 50px;
 }
 
-p {
-    padding-right: 2cm;
+#testing {
+    background-color: navy;
 }
+
+svg {
+    display: block;
+    margin: 0 auto;
+}
+

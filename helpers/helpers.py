@@ -22,9 +22,9 @@ class D3Render(object):
 
 def render_post_page(post_id):
     page_data = return_page_directory(post_id)
-    d3 = D3Render(page_data['json'])
+    scatter_d3 = D3Render(page_data['scatter-json'])
     page_text = dict(title=page_data['title'],
-                     text=page_data['text'])
-    return render_template('post.html',
+                     page=page_data['page'])
+    return render_template(page_text['page'],
                            paragraph=page_text,
-                           d3=d3.render_d3())
+                           d3 = scatter_d3.render_d3())

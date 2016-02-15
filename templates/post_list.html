@@ -1,8 +1,10 @@
 {% extends "layout.html" %}
 {% block body %}
+<div class="container">
 <p class="container">
 {% for entry in paragraph %}
 <h3 class="container"><a href="{{ url_for('return_post', post_id=entry.id) }}">{{ entry.title }} ({{ entry.date }})</a></h3>
 {% endfor %}
 </p>
+</div>
 {% endblock %}

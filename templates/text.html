@@ -1,8 +1,10 @@
 {% extends "layout.html" %}
 {% block body %}
+<div class="container" id="about">
 <p class="container">
 {% for entry in paragraph %}
 {{ entry }}<br />
 {% endfor %}
 </p>
+</div>
 {% endblock %}

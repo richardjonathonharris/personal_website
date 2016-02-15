@@ -1,0 +1,82 @@
+<style>
+div.tooltip {
+    background: lightsteelblue;
+    border: 10px;
+    text-align: center;
+    padding: 2px;
+}
+</style>
+<script type="text/javascript" src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script type="text/javascript">
+var w = 1000;
+var h = 500;
+var padding = 40;
+var dataset = {{ d3|tojson }};
+var xScale = d3.scale.linear()
+                    .domain([0, d3.max(dataset, function(d) { return d.X; })])
+                    .range([padding * 2, w - padding * 12.5]);
+var yScale = d3.scale.linear()
+                    .domain([0, d3.max(dataset, function(d) { return d.Y; })])
+                    .range([h - padding* 3, padding*3]);
+var rScale = d3.scale.linear()
+                    .domain([0, d3.max(dataset, function(d) { return d.Y; })])
+                    .range([2,5]);
+var svg = d3.select("#scatter")
+    .append("svg")
+    .attr("width", w)
+    .attr("height", h);
+var tooltip = d3.select("body")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+svg.selectAll("circle")
+    .data(dataset)
+    .enter()
+    .append("circle")
+    .attr("cx", function(d) {
+            return xScale(d.X);
+            })
+    .attr("cy", function(d) {
+            return yScale(d.Y);
+            })
+    .attr("r", 2.5)
+    .attr("fill", function(d) {
+            if (d.grouping == 0) {
+                return "red"
+                }
+            else if (d.grouping == 1) {
+                return "orange"
+                }
+            else if (d.grouping == 2) {
+                return "yellow"
+                }
+            else if (d.grouping == 3) {
+                return "green"
+                }
+            else if (d.grouping == 4) {
+                return "blue"
+                }
+            else if (d.grouping == 5) {
+                return "purple"
+                }
+            else if (d.grouping == 6) {
+                return "gray"
+                }
+            else {
+                return "black"
+                }
+           })
+    .on("mouseover", function (d) {
+            tooltip.transition()
+                .duration(200)
+                .style("opacity", .9);
+                tooltip.html(d.name + "<br />" + 'Posted: ' + d.date)
+                .style("left", (d3.event.pageX + 5) + ".px")
+                .style("top", (d3.event.pageY - 28) + ".px");
+                })
+    .on("mouseout", function(d) {
+            tooltip.transition()
+                .duration(500)
+                .style("opacity", 0);
+                });
+</script>
