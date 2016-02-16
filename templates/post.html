@@ -1,18 +1,9 @@
 {% extends "layout.html" %}
 {% block body %}
 <div class="container">
-<h1 class="text-center">Noise!</h1>
-<p class="lead">
-<em>Watch this -- It'll be funny!</em>
+<h1 class="text-center">{{ paragraph.title }}</h1>
+<p class="text-right">
+<em>{{ paragraph.date.strftime('%B %d, %Y') }}</em>
 </p>
-<p>
-Stuff!
-</p>
-</div>
-<div class="container">
-<p id="scatter">
-{% include "scatter.html" %}
-</p>
-</div>
-
+{% include paragraph.static %}
 {% endblock %}

@@ -16,8 +16,23 @@ body {
     background-color: navy;
 }
 
-svg {
+svg#scatter {
     display: block;
+    margin: 0 auto;
+}
+
+p {
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+img {
+    padding: 10px;
+}
+
+#cards {
+    width: 50%;
+    max-width: 300px;
     margin: 0 auto;
 }
 

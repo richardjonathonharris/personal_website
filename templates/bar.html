@@ -1,0 +1,101 @@
+<style>
+.axis path,
+.axis line {
+    fill: none;
+    stroke; #000;
+    shape-rendering: crispEdges;
+}
+
+</style>
+
+<script type="text/javascript" src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script type="text/javascript">
+var margin = {top:50, right:50, bottom:100, left:50},
+    width = 800 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+var padding = 1;
+
+var data = {{ bar_d3|tojson }};
+var parseDate = d3.time.format("%m-%Y").parse;
+
+data.forEach(function(d) {
+        d['date'] = parseDate(d['date']);
+        d['value'] = +d['value'];
+        });
+
+var x = d3.time.scale().range([0, width]);
+var y = d3.scale.linear().range([height, 0]);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .ticks(data.length)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left");
+
+var svg = d3.select("#bar")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var minDate = d3.min(data, function(d) {
+        return d['date'];
+        });
+
+var maxDate = d3.max(data, function(d) {
+        return d['date'];
+        });
+
+x.domain([new Date(minDate), new Date(maxDate)]);
+y.domain([0, d3.max(data, function(d) {
+            return d['value'];
+            })]);
+
+svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height +  ")")
+    .call(xAxis)
+    .selectAll("text")
+    .style("text-anchor", "end")
+    .attr("dx", "-.8em")
+    .attr("dy", "-.55em")
+    .attr("transform", "rotate(-90)");
+
+svg.append("g")
+    .attr("class", "y axis")
+    .call(yAxis);
+   
+svg.selectAll("rect")
+    .data(data)
+    .enter()
+    .append("rect")
+    .attr("x", function(d, i){
+            return i * (width / data.length);
+         })
+    .attr("y", function(d) {
+            return y(d['value']);
+          })
+    .attr("width", width / data.length - padding)
+    .attr("height", function(d) {
+         return height - y(d['value']);
+         })
+    .attr("fill", "teal");
+
+svg.append("text")
+    .attr("transform", "translate(" + (width/2) + "," + (height + margin.bottom) + ")")
+    .style("text-anchor", "middle")
+    .text("Month of Submission");
+    
+svg.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 0 - margin.left)
+    .attr("x", 0 - (height / 2))
+    .attr("dy", "1em")
+    .style("text-anchor", "middle")
+    .text("Number of Decks Published");
+
+</script>

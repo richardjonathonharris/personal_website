@@ -1,0 +1,48 @@
+<div class="container">
+<h3>Introduction</h3>
+<p>
+"Netdecking" is a source of any number of arguments in the Netrunner community. If you've never come across the term, it refers to copying a deck that somebody else has made and posted online, optionally tweaking it to include or drop cards. There are some strong and established positions on either side. One side sees the fun, the creativity, and the skill in creating a deck of one's own and (generally) becomes frustrated when their homebrewed decks go up (and often falter against) strong and established decks that other people have made. The other side respsects the power and consistency of a finely-honed deck and (sometimes, but not always) prefer to play Netrunner than invest the quite significant time to create a deck as consistent and powerful as those that already exist.
+</p>
+<p>
+I should establish from the start that I don't really have a horse in that race either way. I like building my own decks, but Netrunner, as a game, is pretty big. There's room for everyone (as far as I see it). I'm also lucky enough to live in Chicago and play in a meta that is, frankly, <em>weird</em>. There are the hyper-tuned, Netdeckiest decks you could ever see. There's also crazy, off-the-wall, "Why would you even <em>put</em> those two cards together?" decks as well. Locally, it's a very diverse meta which welcomes (more or less) whatever you'd want to sleeve up and play.
+</p>
+<p>
+But! As a data scientist, I can't look at an issue without wanting to see the data. And the selection of which deck to netdeck has always seemed inefficient to me. There's quite a bit of testing decks, certainly, but the popularity and development seems evolutionary -- a deck gets made, somebody takes it, tweaks it, posts it, it gets picked up and tweaked again, and etc. What if we could take all the decks within the same style or the same family and see what cards included every time and which are not? Wouldn't that be a slightly more scientific, a slightly more methodical method of deck construction? For somebody looking to netdeck in their local meta, the decisions that are agonized over at the highest level ("Do I include two 'I've had Worse' or three? Do I cut a 'Dirty Laundry' for it?") probably don't measurably affect one's game as much as the choice to play a honed and tested deck or not. In other words, let's use <strong>data</strong> to make the most common deck of a given archetype versus cherry-picking one.
+</p>
+<p>
+The <strong><em>Perfectly Average Deck</em></strong> project is an attempt to do that. What I am to do is to take data on decks, identify clusters of decks, compare the average deck in those clusters, and then post what appears to be the most recently created cluster. What I want to do is two things: 1) satisfy my own curiosity in the types of decks that are out there and 2) make it so that if I <em>do</em> netdeck, I do so in a more data-informed way. To prove that it's just not hot air, I'll play the decks that get created and report back.
+</p>
+<h3>Data</h3>
+<p>
+The data I'm using comes from <a href="http://www.netrunnerdb.com">NetrunnerDB</a>. This is an amazing resource in the Netrunner community where people post, compare, and comment on decklists. It doesn't hurt that the website has a very accessible API as well.
+</p>
+<p>
+There are some caveats however. There are (almost certainly) many more decks on NetrunnerDB than I have access to in the public facing API. Not every deck that gets built gets posted to NetrunnerDB, not every deck that gets posted to NetrunnerDB gets published for everyone to see. This means that there's a strong amount of selection bias at stake (we're <em>not</em> seeing a random sample of decks) and the actual population of decks probably looks different. However, given the central role NetrunnerDB has in informing deckbuilding discussions, I'm comfortable using at as the source for this project. The data that I've pulled includes all decks posted in 2014 and 2015, with some portion of decks posted in 2016 as well (depending on when articles go live).
+</p>
+<p>
+Two other caveats are around. One, because we're doing a separate analysis for each ID, if an ID isn't particularly popular, there's going to be less to say about it. It might make for some very interesting decks but the analysis might fumble a bit. I'll point that out when it happens though. The other wrench in the works is a new addition to Netrunner competitive play known as the NAPD Most Wanted List: this essentially is a restricted card list, which makes some cards more expensive to include in a given deck. The MWL was announced on December 31, 2015 and came into full effect on February 1, 2016. Most decks in our sample, then don't follow that rule. In many cases, that means our "Pefectly Average Decks" are actually going tbe both average and illegal. I've got some tweaks I'll make to filter out those cards, but for the first few posts I'll include the unaltered list as well.
+</p>
+<h3>Methodology</h3>
+<p>
+So, how do you identify common types of decks and then create the "average" deck from them?
+</p>
+<p>
+We've really got two separate problems. The latter problem is easily solved: we'll take all the cards in every deck, take the average number of times a given card shows up, and then build a deck with the most frequently used cards. Netrunner allows up to 3 copies of a single card in a deck (in isolated cases, 6) which makes this easier. If every deck, for example, includes 3 copies of "Sure Gamble", then our Perfectly Average Deck should too. There's a minor wrinkle with <em>influence</em> (cards from out of faction cost a certain mumber of limited points to include). Because these are generally legal decks, we shouldn't see composite decks with too much influence that often, but we may need to manually tweak some of the decks in some cases.
+</p>
+<p>
+The bigger question is, how do we figure out which decks represent a given archetype? For example, the identity Near Earth Hub had two very distinct variants for a long time: Fast Advance, where the player is attempting to score points out of hand, and Murder, where the player is attempting to use cards to flatline their opponent. Both decks are distinct and averaging them together doesn't reflect reality, nor would it give us a very good deck.
+</p>
+<p>
+Here is where data science comes into play. I cluster decks together using a technique called <a href="https://en.wikipedia.org/wiki/K-means_clustering"><em>k</em>-means clustering</a>. We start with a set of qualifications (in this case, what cards are included in a deck) and a number of clusters (which we decide). The classifier then assigns a few random points (in this case, decks) to be the "centers" of the clusters, calculates how close every other point is to each "center", assigns new "centers" based on which decks are now in the middle, and does this over and over until it doesn't change anymore. Somebody even went so far as to <a href="http://simplystatistics.org/2014/02/18/k-means-clustering-in-a-gif">make a gif of it.</a>
+</p>
+<p>
+To compare decks, I transform the data using a technique called <a href="https://en.wikipedia.org/wiki/Tf-idf">TF-IDF</a> (which stands for term frequency-inverse document frequency). This basically counts the number of times a term shows up in a given document (in this case, how often a card is found in a given deck, usually 0, 1, 2, or 3 times) and then divides it by the inverse of how frequently that term shows up in <strong>all</strong> cards. This is important because we want to cluster based on what is unique about a given deck archetype, not on what is generally most common. If we just grouped decks by what cards were most common, we'd have one big archetype with decks that contain the most common cards (your "Sure Gambles", etc). This is frequently used with maps like <a href="http://www.huffingtonpost.com/2015/01/14/most-popular-cuisine-state_n_6457252.html"><em>The Most Disporportionately Popular Cuisines In Each State</em></a> -- the actual most popular food in each state is, unsurprisingly, pizza. What this technique does is ask "What's popular in <strong>this grouping</strong> compared to all groupings?"
+</p>
+<p>
+Finally, because there are 300+ potential cards in any given deck that we're comparing, I apply a filter to the TF-IDF transformed data so we can see it on a plot (which has 2 dimensions, not 300+). The technique I use is called <a href="https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding">t-SNE</a> which is a fairly new and fairly complicated algorithm that takes a lot of dimensions and collapses them into two (where the distance between two points is indicative of how similar or dissiimilar those points are). 
+</p>
+<h3>In Conclusion</h3>
+<p>
+I'll be using these techniques to come up with my "Perfectly Average Decks." There's a fair amount of personal choice that goes into the analysis (how many clusters do we pick, how do we tweak decks for influence, etc.) so this is, by far, not the only valid way to do such a project. My hope is that it's a fun thought piece and provokes some interesting questions.
+</p>
+</div>
